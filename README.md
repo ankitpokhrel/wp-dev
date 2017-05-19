@@ -188,7 +188,7 @@ All volumes are mounted inside `.data` folder except the logs. Logs are mounted 
 
 ### Database provisioning and backup
 If you want to import database for a project during setup, just add a sql file with same name as your database name and the system
-will automatically import it during the build process. So for the basic setup above in [Configure website](/master#configure-websites) 
+will automatically import it during the build process. So for the basic setup above in [Configure websites](#configure-websites) 
 section, you need to add a file called `website1_db` inside database folder. 
 
 #### Backup all databases
