@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+
+.data
+setups.yml
+mysql-secret.cnf
+core/configs/*/configs/nginx.conf

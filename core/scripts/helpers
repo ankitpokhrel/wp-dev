@@ -1,0 +1,96 @@
+#!/bin/bash
+#
+# Helper functions.
+
+function get_yaml_value
+{
+  cat setups.yml | shyaml get-value $1
+}
+
+function get_yaml_values
+{
+  cat setups.yml | shyaml get-values $1
+}
+
+function set_project_env
+{
+  set -a
+  . "app_env"
+  set +a
+}
+
+function confirm_action
+{
+  read -p "$1" -n 1 -r
+
+  echo
+  if [[ ! $REPLY =~ ^[y]$ ]]; then
+    warning "Operation aborted."
+    exit 0
+  fi
+}
+
+function get_value
+{
+  local key=$1
+  local default=$2
+
+  local value=$(get_yaml_value ${key} 2> /dev/null)
+
+  if [[ -z "${value}" ]]; then
+    value="${default}"
+  fi
+
+  echo ${value}
+}
+
+function log
+{
+  local level=$1
+  local msg=$2
+  local lf=$3
+  local bold=$(tput bold)
+  local normal=$(tput sgr0)
+
+  case "$level" in
+    error)   color_code='91'; ;;
+    info)    color_code='31'; ;;
+    success) color_code='32'; ;;
+    warning) color_code='36'; ;;
+    *)       color_code='39'; ;;
+  esac
+
+  local reset="\e[0m"
+  local color="\e[0;${color_code}m"
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    reset="\x1B[0m"
+    color="\x1B[0;${color_code}m"
+  fi
+
+  local level="$(tr '[:lower:]' '[:upper:]' <<< ${level:0:1})${level:1}"
+
+  echo -e "${lf}${color}${bold}${level}${normal}: ${msg}${reset}"
+}
+
+function info
+{
+  log info "$1" "$2"
+}
+
+function warning
+{
+  log warning "$1" "$2"
+}
+
+function success
+{
+  log success "$1" "$2"
+}
+
+function error
+{
+  log error "[$(date +'%Y-%m-%dT%H:%M:%S%z')] $1" "$2" 1>&2
+
+  exit 1;
+}

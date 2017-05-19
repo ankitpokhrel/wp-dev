@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Rebuild script.
+
+source core/scripts/helpers
+source core/scripts/docker
+
+set_project_env
+
+function usage
+{
+  echo "
+Usage: rebuild
+
+Remove and rebuild all core images and projects by default.
+
+Options:
+  -h | --help                 Display this help text
+  --no-cache                  Rebuild all skipping cache
+
+Commands:
+  projects \"<project list>\"   Rebuild given projects. Use \"all\" to rebuild all projects
+"
+}
+
+case $1 in
+  -h | --help )  usage
+                 exit 0
+                 ;;
+
+ --no-cache )    info "Starting rebuild process using --no-cache option"
+                 rebuild_without_cache
+                 ;;
+
+  projects )     info "Rebuilding projects"
+                 rebuild_projects "${@:2}"
+                 ;;
+
+  * )            info "Starting rebuild process"
+                 rebuild_with_cache
+                 ;;
+esac

@@ -1,0 +1,28 @@
+#!/usr/bin
+
+# WP Dev
+export APP_NAME="wpdev"
+export APP_PORT="80"
+export NETWORK_NAME="wpdev_network"
+export COMPOSE_FILE="docker-compose.yml"
+export LOG_FILE="${PWD}/logs/${APP_NAME}.logs"
+
+# Default WordPress Settings
+export WP_DEFAULT_TITLE="WordPress" # Site title
+export WP_ADMIN_USER="admin"
+export WP_ADMIN_PASSWORD="admin"
+export WP_ADMIN_EMAIL="admin@local.dev"
+
+# MySQL Database
+export MYSQL_PORT="3306"
+export MYSQL_ROOT_PASSWORD="wpdev"
+export DB_HOST="172.19.0.25"
+export DB_USER="wpdev"
+export DB_PASSWORD="wpdev"
+
+# Redis
+export REDIS_PORT="6379"
+
+# phpmyadmin or adminer
+export MYSQL_CLIENT="phpmyadmin"
+export MYSQL_CLIENT_PORT="8080"

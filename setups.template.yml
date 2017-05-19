@@ -1,0 +1,23 @@
+---
+website1:
+  host: website1.dev
+  source: git@git.org:user/project.git
+  title: "Website 1 with all settings"
+  admin_user: "admin"
+  admin_password: "admin"
+  admin_email: "admin@website1.com"
+  plugins:
+    - "plugin-slug-1 --activate"
+    - "plugin-slug-2"
+  themes:
+    - "theme-slug-1 --activate"
+    - "theme-slug-2"
+  env:
+    DB_NAME: website1_db
+
+website2:
+  host: website2.dev
+  title: "Website 2 with minimal settings."
+  version: "4.5"
+  env:
+    DB_NAME: website2_db

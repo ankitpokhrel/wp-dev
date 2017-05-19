@@ -1,0 +1,184 @@
+#!/bin/bash
+#
+# Handle all docker related commands.
+
+function create_network
+{
+  (docker network ls -f name=${NETWORK_NAME} | grep ${NETWORK_NAME}) > /dev/null || \
+    docker network create ${NETWORK_NAME} \
+      --subnet=172.19.0.0/16 \
+      --gateway=172.19.0.100 \
+      --ip-range=172.19.1.0/24 \
+      2>>${LOG_FILE} || \
+    error "Failed to create network"
+}
+
+function build_base_image
+{
+  local base_path="core/images/base/";
+
+  docker build $1 -t wpdev-base \
+    -f ${base_path}Dockerfile ${base_path} 2>>${LOG_FILE} || \
+    error "Failed to build docker image for base"
+}
+
+function build_proxy
+{
+  local base_path="core/images/proxy/";
+
+  docker build $1 -t wpdev-proxy \
+    -f ${base_path}Dockerfile ${base_path} 2>>${LOG_FILE} || \
+    error "Failed to build docker image for proxy"
+}
+
+function build_mysql
+{
+  local base_path="core/images/mysql/";
+
+  docker build $1 -t wpdev-mysql \
+    -f ${base_path}Dockerfile ${base_path} 2>>${LOG_FILE} || \
+    error "Failed to build docker image for mysql"
+}
+
+function rebuild_with_cache
+{
+  confirm_action "Are you sure you want to rebuild ${APP_NAME} setup? [y/n] "
+
+  core/scripts/destroy -f
+  core/scripts/build
+}
+
+function rebuild_without_cache
+{
+  confirm_action "Are you sure you want to rebuild ${APP_NAME} setup? [y/n] "
+
+  core/scripts/destroy -f
+  core/scripts/build --no-cache
+}
+
+function rebuild_projects
+{
+  local projects=$1
+
+  if [[ -z "${projects}" ]]; then
+    error "Project list required"
+  fi
+
+  confirm_action "Are you sure you want to rebuild ${APP_NAME} setup? [y/n] "
+
+  docker rm -f $(docker ps -aq --filter "label=type=project") 2>>${LOG_FILE} || \
+    error "Unable to remove project containers."
+
+  core/scripts/build projects "${projects}"
+}
+
+function boot_project
+{
+  local virtual_host=$2
+
+  export PROJECT_NAME=$1
+
+  local project_config_path="core/configs/${PROJECT_NAME}/"
+
+  if [[ ! -f ${project_config_path}${COMPOSE_FILE} ]]; then
+    warning "docker-compose.yml file not found for ${PROJECT_NAME}."
+
+    project_config_path="core/configs/default/"
+  fi
+
+  info "Running compose file ${project_config_path}${COMPOSE_FILE}"
+
+  export DB_NAME=$(get_value ${PROJECT_NAME}.env.DB_NAME "${PROJECT_NAME}_db")
+  export VIRTUAL_HOST=${virtual_host}
+
+  cp "${project_config_path}configs/nginx.conf.template" "${project_config_path}configs/nginx.conf"
+  sed -i '' -e "s/<VIRTUAL_HOST>/${VIRTUAL_HOST}/g" "${project_config_path}configs/nginx.conf"
+
+  (cd ${project_config_path}; \
+    docker-compose -p "${virtual_host}" -f ${COMPOSE_FILE} down 2>>${LOG_FILE} && \
+    docker-compose -p "${virtual_host}" -f ${COMPOSE_FILE} up -d --build --remove-orphans 2>>${LOG_FILE} || \
+    error "Problem in setting up ${virtual_host}.")
+
+  rm -f "${project_config_path}configs/nginx.conf"
+}
+
+function setup_project
+{
+  local project_name=$1
+  local virtual_host=$2
+  local project_path="./projects/${project_name}"
+
+  if [[ -f ${project_path}/wp-config.php ]]; then
+    info  "Skipping ${project_path} setup"
+    return
+  fi
+
+  local source="$(get_yaml_value ${project_name}.source 2> /dev/null)"
+
+  if [[ -n "${source}" ]]; then
+    # clone project
+    git clone --recursive ${source} ${project_path}
+  else
+    # download core
+    local version="$(get_yaml_value ${project_name}.version 2> /dev/null)"
+    if [[ -z "${version}" ]]; then
+      version="latest"
+    fi
+
+    docker exec -it ${virtual_host} bash -c "wp core download --version=${version} --allow-root"
+  fi
+
+  # continue with the setup
+  continue_wordpress_setup ${project_name} ${virtual_host}
+}
+
+function provision_database
+{
+  # Wait for mysql to accept connections
+  mysql_health_check
+
+  local db_name=$1
+
+  info "Creating database ${db_name}"
+
+  local connection_string="mysql --defaults-extra-file=/mysql-secret.cnf"
+  local create="CREATE DATABASE IF NOT EXISTS ${db_name};"
+  local grant="GRANT ALL PRIVILEGES ON ${db_name}.* TO \"${DB_USER}\"@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;"
+
+  docker exec -it wpdev-mysql bash -c "echo \"${create}${grant}\" | ${connection_string}" || \
+    error "Couldn't create database ${db_name}"
+}
+
+function mysql_health_check
+{
+  info "Performing health check for mysql"
+
+  local mysql_health_check="mysqladmin --defaults-extra-file=/mysql-secret.cnf ping"
+  local cmd=$(docker exec -it wpdev-mysql bash -c "${mysql_health_check}")
+
+  while [[ "${cmd}" != *"mysqld is alive"* ]]; do
+    info "Waiting for mysql to accept connections"
+    sleep 5
+    cmd=$(docker exec -it wpdev-mysql bash -c "${mysql_health_check}")
+  done
+}
+
+function run_mysql_client
+{
+  info "Starting ${MYSQL_CLIENT}"
+
+  local container_name=${APP_NAME}-${MYSQL_CLIENT}
+  local status=$(docker inspect -f {{.State.Running}} ${container_name} 2> /dev/null)
+
+  if [[ -n "${status}" ]]; then
+    docker start ${container_name} > /dev/null
+  else
+    if [[ ${MYSQL_CLIENT} == "adminer" ]]; then
+      docker run -d -p ${MYSQL_CLIENT_PORT}:${APP_PORT} --network ${NETWORK_NAME} --name ${container_name} \
+        --label group=${APP_NAME} clue/adminer
+    else
+      docker run -d -p ${MYSQL_CLIENT_PORT}:${APP_PORT} --network ${NETWORK_NAME} -e PMA_HOSTS=wpdev-mysql \
+        --label group=${APP_NAME} --name ${container_name} phpmyadmin/phpmyadmin
+    fi
+  fi
+}

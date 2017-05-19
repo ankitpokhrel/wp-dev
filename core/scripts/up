@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Start all related containers.
+
+source core/scripts/helpers
+
+set_project_env
+
+info "Starting containers for ${APP_NAME}"
+if [[ $(docker ps -aq --filter "label=group=${APP_NAME}") ]]; then
+  docker start $(docker ps -aq --filter "label=group=${APP_NAME}") 2>>${LOG_FILE} || \
+    error "Unable to start core containers."
+
+  success "All containers are up and running." "\n"
+else
+  error "No containers to start for ${APP_NAME}. Try './wpdev build'"
+fi

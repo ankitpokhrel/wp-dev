@@ -1,0 +1,49 @@
+#!/bin/bash
+
+readonly CMD_PATH="./core/scripts/"
+
+function usage
+{
+  echo "
+Usage: wpdev
+
+Build all images and projects by default.
+
+Commands:
+    up                          Start all related containers
+    down                        Stop all related containers
+    build   [--no-cache] [-h]   Build the infra
+    destroy [-f, --force]       Destroy the infra
+    rebuild [--no-cache] [-h]   Rebuild the infra
+"
+}
+
+case $1 in
+  up )
+    ${CMD_PATH}up
+    ;;
+
+  down )
+    ${CMD_PATH}down
+    ;;
+
+  build )
+    ${CMD_PATH}build "${@:2}"
+    ;;
+
+  destroy )
+    ${CMD_PATH}destroy "${@:2}"
+    ;;
+
+  rebuild )
+    ${CMD_PATH}rebuild "${@:2}"
+    ;;
+
+  db )
+    ${CMD_PATH}db "${@:2}"
+    ;;
+
+  * )
+    usage
+    ;;
+esac

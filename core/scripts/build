@@ -1,0 +1,117 @@
+#!/bin/bash
+#
+# Build dev environment.
+
+source core/scripts/helpers
+source core/scripts/wp
+source core/scripts/docker
+
+set_project_env
+
+function usage
+{
+  echo "
+Usage: build
+
+Build all images and projects by default.
+
+Options:
+    -h | --help                 Display this help text
+
+Commands:
+    projects \"<project list>\"   Build given projects. Use \"all\" to build all projects.
+    core [--no-cache]           Build core images
+"
+}
+
+function build_core_images
+{
+  info "Checking for network"
+  create_network
+
+  local cache=$1
+
+  cp "core/images/mysql/secret.cnf" "core/images/mysql/mysql-secret.cnf"
+  sed -i '' -e "s/<MYSQL_ROOT_PASSWORD>/${MYSQL_ROOT_PASSWORD}/g" "core/images/mysql/mysql-secret.cnf"
+
+  if [[ "${cache}" == "--no-cache" ]]; then
+    info "Building base image with --no-cache option"
+    build_base_image ${cache}
+
+    info "Building proxy with --no-cache option"
+    build_proxy ${cache}
+
+    info "Building mysql with --no-cache option"
+    build_mysql ${cache}
+  else
+    info "Building base image"
+    build_base_image
+
+    info "Building proxy"
+    build_proxy
+
+    info "Building mysql"
+    build_mysql
+  fi
+
+  info "Shutting down old reference (if any)"
+  docker-compose -p ${APP_NAME} -f core/${COMPOSE_FILE} down 2>>${LOG_FILE} || \
+    error "Unable to shutdown containers."
+
+  info "Booting WP Dev"
+  docker-compose -p ${APP_NAME} -f core/${COMPOSE_FILE} up -d --build --remove-orphans 2>>${LOG_FILE} || \
+    error "Problem in running main docker-compose file."
+
+  success "Successfully built core images."
+}
+
+function build_projects
+{
+  local projects=$1
+
+  for project in ${projects}; do
+    info "Setting up ${project}"
+
+    virtual_host=$(get_yaml_value ${project}.host)
+
+    boot_project ${project} ${virtual_host}
+    provision_database ${DB_NAME}
+    setup_project ${project} ${virtual_host}
+  done
+
+  success "Successfully built projects."
+}
+
+function build_all
+{
+  build_core_images $1
+
+  local projects=$(cat setups.yml | shyaml keys)
+  build_projects "${projects}"
+
+  run_mysql_client
+}
+
+case $1 in
+  -h | --help )
+    usage
+    ;;
+
+  projects )
+    if [[ "$2" == "all" ]]; then
+      projects=$(cat setups.yml | shyaml keys)
+    else
+      projects="${@:2}"
+    fi
+
+    build_projects "${projects}"
+    ;;
+
+  core )
+    build_core_images $2
+    ;;
+
+  * )
+    build_all $1
+    ;;
+esac

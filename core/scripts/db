@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Database based operations.
+
+source core/scripts/helpers
+
+set_project_env
+
+function usage
+{
+  echo "
+Usage: db
+
+Perform database related operations.
+
+Commands:
+    backup      -d \"<Database names>\" [-p <File path to save>]  Backup specific database in given path
+    backup_all  [-p <File path to save>]                        Backup all database
+"
+}
+
+function backup_all
+{
+  local now=$(date +"%Y-%m-%d-%H:%M:%S")
+  local download_path="./database/bkp-${now}.sql"
+
+  while getopts "p:" arg; do
+    case ${arg} in
+      p ) download_path=${OPTARG}
+          ;;
+    esac
+  done
+
+  info "Creating backup for all databases"
+  docker exec wpdev-mysql bash -c "exec mysqldump --defaults-extra-file=/mysql-secret.cnf --all-databases" > ${download_path} || \
+    error "Oops! Something went wrong."
+
+  success "Database dump saved: ${download_path}"
+}
+
+function backup
+{
+  local database=""
+  local now=$(date +"%Y-%m-%d-%H:%M:%S")
+  local download_path="./database/bkp-${now}.sql"
+
+  while getopts "d:p:" arg; do
+    case ${arg} in
+      d ) database=${OPTARG}
+          ;;
+      p ) download_path=${OPTARG}
+          ;;
+    esac
+  done
+
+  if [[ -z "${database}" ]]; then
+    usage
+    error "Database name list is required"
+    exit 1
+  fi
+
+  info "Creating backup for ${database}"
+  docker exec wpdev-mysql bash -c "exec mysqldump --defaults-extra-file=/mysql-secret.cnf --databases ${database}" \
+    > ${download_path} || \
+    error "Oops! Looks like only partial backup was created. Please correct the errors."
+
+  success "Database dump for ${database} saved: ${download_path}"
+}
+
+case $1 in
+  backup )      backup "${@:2}"
+                ;;
+
+  backup_all )  backup_all "${@:2}"
+                ;;
+
+  * )           usage
+                exit 0
+                ;;
+esac

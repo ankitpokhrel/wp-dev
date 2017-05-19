@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Stop all related containers.
+
+source core/scripts/helpers
+
+set_project_env
+
+info "Stopping containers for ${APP_NAME}"
+if [[ $(docker ps -aq --filter "label=group=${APP_NAME}") ]]; then
+  docker stop $(docker ps -aq --filter "label=group=${APP_NAME}") 2>>${LOG_FILE} \
+    || error "Unable to stop containers."
+
+  success "All containers for ${APP_NAME} were stopped successfully." "\n"
+else
+  error "No containers to stop for ${APP_NAME}."
+fi

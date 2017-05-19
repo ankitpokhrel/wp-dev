@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  www:
+    build: .
+    container_name: ${VIRTUAL_HOST}
+    volumes:
+      - ../../../projects/${PROJECT_NAME}:/var/www
+      - ../../../.data/composer:/root/.composer
+      - ../../../.data/wp-cli:/root/.wp-cli
+      - ../../../logs/${VIRTUAL_HOST}:/var/log/nginx
+    external_links:
+      - "${APP_NAME}-mysql"
+      - "${APP_NAME}-redis"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    labels:
+      group: ${APP_NAME}
+      type: project
+
+networks:
+  default:
+    external:
+      name: ${NETWORK_NAME}

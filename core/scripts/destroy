@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Remove all containers and networks.
+
+source core/scripts/helpers
+
+set_project_env
+
+function destroy
+{
+  info "Removing containers for ${APP_NAME}"
+  if [[ $(docker ps -aq --filter "label=group=${APP_NAME}") ]]; then
+    docker rm -f $(docker ps -aq --filter "label=group=${APP_NAME}") 2>>${LOG_FILE} \
+      || error "Unable to remove containers."
+  else
+    error "No containers to remove for ${APP_NAME}."
+  fi
+
+  info "Removing network ${NETWORK_NAME}" "\n"
+  (docker network ls -f name=${NETWORK_NAME} | grep ${NETWORK_NAME}) > /dev/null \
+    && docker network rm ${NETWORK_NAME} > /dev/null
+
+  success "All containers and network for ${APP_NAME} were removed successfully."
+}
+
+function confirm_destroy_action
+{
+  confirm_action "Are you sure you want to destroy ${APP_NAME} setup? [y/n] "
+}
+
+if [[ $# == 0 ]]; then
+  confirm_destroy_action
+  destroy
+else
+  if [[ "$1" == "-f" || "$1" == "--force" ]]; then
+    destroy
+  else
+    confirm_destroy_action
+    destroy
+  fi
+fi
