@@ -178,6 +178,11 @@ usage: rebuild
         -h | --help   Display this help text
 ```
 
+### Override project configuration
+To override configurations for a project, copy `core/configs/default` folder and name it to your website name you are 
+using in `setups.yml`. You can now change required configurations for the project. The system will first check if the 
+configuration for the website is available and builds it, if not, it will use default configuration. 
+
 ### Volumes
 All volumes are mounted inside `.data` folder except the logs. Logs are mounted inside `logs` folder.
 
