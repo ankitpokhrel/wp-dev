@@ -210,7 +210,7 @@ $ ./wpdev db backup -d "db1 db2"
 
 Same as above it will save backup to the `database` folder. You can provide custom path using `-p` option. 
 ```shell
-$ ./wpdev db backup_all -d "db1 db2" -p /path/to/downloads/bkp.sql
+$ ./wpdev db backup -d "db1 db2" -p /path/to/downloads/bkp.sql
 ```
 
 ### MySQL Client
