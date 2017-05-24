@@ -12,8 +12,9 @@ Build all images and projects by default.
 Commands:
     up                          Start all related containers
     down                        Stop all related containers
+    db                          Perform database related operations
     build   [--no-cache] [-h]   Build the infra
-    destroy [-f, --force]       Destroy the infra
+    destroy [--force]    [-f]   Destroy the infra
     rebuild [--no-cache] [-h]   Rebuild the infra
 "
 }
