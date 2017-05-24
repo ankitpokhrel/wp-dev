@@ -6,9 +6,9 @@ function create_network
 {
   (docker network ls -f name=${NETWORK_NAME} | grep ${NETWORK_NAME}) > /dev/null || \
     docker network create ${NETWORK_NAME} \
-      --subnet=172.19.0.0/16 \
-      --gateway=172.19.0.100 \
-      --ip-range=172.19.1.0/24 \
+      --subnet=192.168.10.0/16 \
+      --gateway=192.168.10.100 \
+      --ip-range=192.168.10.0/16 \
       2>>${LOG_FILE} || \
     error "Failed to create network"
 }
