@@ -174,10 +174,10 @@ function run_mysql_client
     docker start ${container_name} > /dev/null
   else
     if [[ ${MYSQL_CLIENT} == "adminer" ]]; then
-      docker run -d -p ${MYSQL_CLIENT_PORT}:${APP_PORT} --network ${NETWORK_NAME} --name ${container_name} \
+      docker run -d -p ${MYSQL_CLIENT_PORT}:80 --network ${NETWORK_NAME} --name ${container_name} \
         --label group=${APP_NAME} clue/adminer
     else
-      docker run -d -p ${MYSQL_CLIENT_PORT}:${APP_PORT} --network ${NETWORK_NAME} -e PMA_HOSTS=wpdev-mysql \
+      docker run -d -p ${MYSQL_CLIENT_PORT}:80 --network ${NETWORK_NAME} -e PMA_HOSTS=wpdev-mysql \
         --label group=${APP_NAME} --name ${container_name} phpmyadmin/phpmyadmin
     fi
   fi
