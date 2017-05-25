@@ -223,5 +223,5 @@ You can choose between `phpmyadmin` or `adminer` as your mysql client. By defaul
 These values are configurable in `app_env`. So with default configuration, you can access the client by visiting 
 http://localhost:8080. You can use the values `DB_USER` and `DB_PASSWORD` from `app_env` to login.
 
-By default, mysql runs on ip `172.19.0.25` as listed in `app_env`. So if you are using adminer as a client you should 
+By default, mysql runs on ip `192.168.10.25` as listed in `app_env`. So if you are using adminer as a client you should 
 use that ip as a host. To connect database using third party client like sequel pro, use `0.0.0.0` as a host.
