@@ -157,6 +157,22 @@ Update `/etc/hosts` by adding all hosts listed in `setups.yml`
 If you followed above steps correctly then, at this point, you should be able access project in your browser. Project files are 
 located inside `projects` folder.
 
+### Accessing database configs
+Database configs are stored in environment variables. In order to use it in say your project, use `getenv`.
+```
+/** The name of the database for WordPress */
+define('DB_NAME', getenv('DB_NAME'));
+
+/** MySQL database username */
+define('DB_USER', getenv('DB_USER'));
+
+/** MySQL database password */
+define('DB_PASSWORD', getenv('DB_PASSWORD'));
+
+/** MySQL hostname */
+define('DB_HOST', getenv('DB_HOST'));
+```
+
 ### Shutdown project containers
 You can shutdown running containers using following script.
 ```shell
