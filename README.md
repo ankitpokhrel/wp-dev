@@ -241,3 +241,8 @@ http://localhost:8080. You can use the values `DB_USER` and `DB_PASSWORD` from `
 
 By default, mysql runs on ip `192.168.10.25` as listed in `app_env`. So if you are using adminer as a client you should 
 use that ip as a host. To connect database using third party client like sequel pro, use `0.0.0.0` as a host.
+
+### Todo
+- [ ] Add PHP_CodeSniffer for [WordPress](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
+- [ ] Ability to sync/update plugins, themes, core etc for a project.
+- [ ] Ability to create new project from existing one (variation).
