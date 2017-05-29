@@ -167,7 +167,7 @@ function run_mysql_client
 {
   info "Starting ${MYSQL_CLIENT}"
 
-  local container_name=${APP_NAME}-${MYSQL_CLIENT}
+  local container_name="wpdev-${MYSQL_CLIENT}"
   local status=$(docker inspect -f {{.State.Running}} ${container_name} 2> /dev/null)
 
   if [[ -n "${status}" ]]; then
