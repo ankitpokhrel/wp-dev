@@ -60,7 +60,7 @@ export WP_ADMIN_EMAIL="admin@local.dev"
 # MySQL Database
 export MYSQL_PORT="3306"
 export MYSQL_ROOT_PASSWORD="wpdev"
-export DB_HOST="172.19.0.25"
+export DB_HOST="192.168.10.25"
 export DB_USER="wpdev"
 export DB_PASSWORD="wpdev"
 export MYSQL_CLIENT_PORT="8080"
