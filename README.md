@@ -26,7 +26,8 @@ website1:
 5. [Redis](https://redis.io/)
 6. [WP-CLI](http://wp-cli.org/)
 7. [Composer](https://getcomposer.org/)
-8. [phpMyAdmin](https://www.phpmyadmin.net/) & [Adminer](https://www.adminer.org/)
+8. [NodeJs 6.x](https://nodejs.org)
+9. [phpMyAdmin](https://www.phpmyadmin.net/) & [Adminer](https://www.adminer.org/)
 
 ### Prerequisites
 1. Install docker: https://docs.docker.com/engine/installation/
@@ -204,6 +205,7 @@ configuration for the website is available and builds it, if not, it will use de
 All volumes are mounted inside `.data` folder except the logs. Logs are mounted inside `logs` folder.
 
 - Composer: .data/composer
+- NPM: .data/npm
 - MySQL: .data/mysql
 - Redis: .data/redis
 - WP-CLI: .data/wp-cli
@@ -244,6 +246,7 @@ By default, mysql runs on ip `192.168.10.25` as listed in `app_env`. So if you a
 use that ip as a host. To connect database using third party client like sequel pro, use `0.0.0.0` as a host.
 
 ### Todo
+- [x] Add NodeJs and npm support
 - [ ] Add PHP_CodeSniffer for [WordPress](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
 - [ ] Ability to sync/update plugins, themes, core etc for a project.
 - [ ] Ability to create new project from existing one (variation).
