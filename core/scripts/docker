@@ -168,17 +168,16 @@ function run_mysql_client
   info "Starting ${MYSQL_CLIENT}"
 
   local container_name="wpdev-${MYSQL_CLIENT}"
-  local status=$(docker inspect -f {{.State.Running}} ${container_name} 2> /dev/null)
 
-  if [[ -n "${status}" ]]; then
-    docker start ${container_name} > /dev/null
+  docker rm -f ${container_name} &> /dev/null
+
+  if [[ ${MYSQL_CLIENT} == "adminer" ]]; then
+    docker rm -f wpdev-phpmyadmin &> /dev/null
+    docker run -d -p ${MYSQL_CLIENT_PORT}:80 --network ${NETWORK_NAME} --name ${container_name} \
+      --label group=${APP_NAME} clue/adminer
   else
-    if [[ ${MYSQL_CLIENT} == "adminer" ]]; then
-      docker run -d -p ${MYSQL_CLIENT_PORT}:80 --network ${NETWORK_NAME} --name ${container_name} \
-        --label group=${APP_NAME} clue/adminer
-    else
-      docker run -d -p ${MYSQL_CLIENT_PORT}:80 --network ${NETWORK_NAME} -e PMA_HOSTS=wpdev-mysql \
-        --label group=${APP_NAME} --name ${container_name} phpmyadmin/phpmyadmin
-    fi
+    docker rm -f wpdev-adminer &> /dev/null
+    docker run -d -p ${MYSQL_CLIENT_PORT}:80 --network ${NETWORK_NAME} -e PMA_HOSTS=wpdev-mysql \
+      --label group=${APP_NAME} --name ${container_name} phpmyadmin/phpmyadmin
   fi
 }
