@@ -46,6 +46,15 @@ RUN node --version && npm --version
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 RUN wp --info --allow-root
 
+# Install PHP_Codesniffer
+RUN curl -OL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.1/phpcs.phar && chmod +x phpcs.phar && mv phpcs.phar /usr/local/bin/phpcs
+RUN curl -OL https://github.com/squizlabs/PHP_CodeSniffer/releases/download/2.9.1/phpcbf.phar && chmod +x phpcbf.phar && mv phpcbf.phar /usr/local/bin/phpcbf
+RUN phpcs --version
+
+# Install WP Codesniffer
+RUN git clone -b master https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git /tmp/wpcs
+RUN phpcs --config-set installed_paths /tmp/wpcs
+
 # Add configs
 ADD ./configs/www.conf /etc/php/7.0/fpm/pool.d/www.conf
 ADD ./configs/php.ini /etc/php/7.0/fpm/99-custom.ini
