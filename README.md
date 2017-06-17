@@ -27,7 +27,8 @@ website1:
 6. [WP-CLI](http://wp-cli.org/)
 7. [Composer](https://getcomposer.org/)
 8. [NodeJs 6.x](https://nodejs.org)
-9. [phpMyAdmin](https://www.phpmyadmin.net/) & [Adminer](https://www.adminer.org/)
+9. [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) & [WP Coding Standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards)
+10. [phpMyAdmin](https://www.phpmyadmin.net/) & [Adminer](https://www.adminer.org/)
 
 ### Prerequisites
 1. Install docker: https://docs.docker.com/engine/installation/
@@ -245,8 +246,25 @@ http://localhost:8080. You can use the values `DB_USER` and `DB_PASSWORD` from `
 By default, mysql runs on ip `192.168.10.25` as listed in `app_env`. So if you are using adminer as a client you should 
 use that ip as a host. To connect database using third party client like sequel pro, use `0.0.0.0` as a host.
 
+### Running WP CodeSniffer
+You can enter into container and run:
+```shell
+$ phpcs --standard=WordPress /path/to/file/or/folder
+
+# to fix
+$ phpcbf --standard=WordPress /path/to/file/or/folder
+```
+
+Or, execute it from outside
+```shell
+$ docker exec -it <container name or id> bash -c "phpcs --standard=WordPress /path/to/file/or/folder"
+
+# to fix
+$ docker exec -it <container name or id> bash -c "phpcbf --standard=WordPress /path/to/file/or/folder"
+```
+
 ### Todo
 - [x] Add NodeJs and npm support
-- [ ] Add PHP_CodeSniffer for [WordPress](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
+- [x] Add PHP_CodeSniffer for [WordPress](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
 - [ ] Ability to sync/update plugins, themes, core etc for a project.
 - [ ] Ability to create new project from existing one (variation).
