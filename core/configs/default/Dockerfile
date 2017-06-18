@@ -2,7 +2,7 @@ FROM wpdev-base
 
 WORKDIR /var/www
 
-ADD configs/nginx.conf /etc/nginx/nginx.conf
+ADD ./configs/nginx.conf /etc/nginx/nginx.conf
 
 RUN chown -R www-data:www-data /var/www
 

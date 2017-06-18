@@ -37,9 +37,6 @@ services:
       tag: ${APP_NAME}-mysql
       group: ${APP_NAME}
       type: image
-    networks:
-      default:
-        ipv4_address: ${DB_HOST}
 
   redis:
     image: redis
