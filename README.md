@@ -62,7 +62,7 @@ export WP_ADMIN_EMAIL="admin@local.dev"
 # MySQL Database
 export MYSQL_PORT="3306"
 export MYSQL_ROOT_PASSWORD="wpdev"
-export DB_HOST="192.168.10.25"
+export DB_HOST="wpdev-mysql" # Name of your mysql container
 export DB_USER="wpdev"
 export DB_PASSWORD="wpdev"
 export MYSQL_CLIENT_PORT="8080"
@@ -243,8 +243,8 @@ You can choose between `phpmyadmin` or `adminer` as your mysql client. By defaul
 These values are configurable in `app_env`. So with default configuration, you can access the client by visiting 
 http://localhost:8080. You can use the values `DB_USER` and `DB_PASSWORD` from `app_env` to login.
 
-By default, mysql runs on ip `192.168.10.25` as listed in `app_env`. So if you are using adminer as a client you should 
-use that ip as a host. To connect database using third party client like sequel pro, use `0.0.0.0` as a host.
+> To connect database using third party clients like sequel pro, use `0.0.0.0` as a host. 
+> `DB_HOST` is the ip of your mysql container which is `wpdev-mysql` by default.
 
 ### Running WP CodeSniffer
 You can enter into container and run:
