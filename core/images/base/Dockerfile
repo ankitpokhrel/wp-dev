@@ -27,6 +27,7 @@ RUN apt-get -y install rsyslog \
                        php7.0-ldap \
                        php7.0-zip \
                        php7.0-xml \
+                       php-xdebug \
                        php7.0-mysql \
                        php7.0-soap \
                        php7.0-curl && \
