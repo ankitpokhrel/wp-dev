@@ -58,7 +58,7 @@ RUN phpcs --config-set installed_paths /tmp/wpcs
 
 # Add configs
 ADD ./configs/www.conf /etc/php/7.0/fpm/pool.d/www.conf
-ADD ./configs/php.ini /etc/php/7.0/fpm/99-custom.ini
+ADD ./configs/php.ini /etc/php/7.0/fpm/conf.d/99-custom.ini
 ADD ./configs/supervisord.conf /etc/supervisord.conf
 
 WORKDIR /var/www
