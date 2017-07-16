@@ -72,6 +72,9 @@ export REDIS_PORT="6379"
 
 # phpmyadmin or adminer
 export MYSQL_CLIENT="phpmyadmin"
+
+# xdebug
+export HOST_IP=192.168.1.2 # Your machine ip address for xdebug connection
 ```
 
 ### Configure websites
