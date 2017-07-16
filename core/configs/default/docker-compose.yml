@@ -18,6 +18,8 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - XDEBUG_CONFIG=remote_host=${HOST_IP}
+      - PHP_IDE_CONFIG=serverName=${VIRTUAL_HOST}
     labels:
       group: ${APP_NAME}
       type: project
