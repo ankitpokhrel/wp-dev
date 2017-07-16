@@ -266,8 +266,16 @@ $ docker exec -it <container name or id> bash -c "phpcs --standard=WordPress /pa
 $ docker exec -it <container name or id> bash -c "phpcbf --standard=WordPress /path/to/file/or/folder"
 ```
 
+### Xdebug Remote Connection
+To debug with xdebug using IDE like PHPStorm, follow following steps.
+1. Update your machine ip (`HOST_IP`) in `app_env`.
+2. Use your host name (container name) as a server name.
+3. Use `localhost` as `host` and `APP_PORT` as port.
+4. Start listening to PHP Debug Connections from your IDE.
+
 ### Todo
-- [x] Add NodeJs and npm support
+- [x] Add NodeJs and npm support.
 - [x] Add PHP_CodeSniffer for [WordPress](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
+- [x] Setup [Xdebug](https://xdebug.org/) remote connection.
 - [ ] Ability to sync/update plugins, themes, core etc for a project.
 - [ ] Ability to create new project from existing one (variation).
