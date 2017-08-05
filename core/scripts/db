@@ -32,7 +32,7 @@ function backup_all
   done
 
   info "Creating backup for all databases"
-  docker exec wpdev-mysql bash -c "exec mysqldump --defaults-extra-file=/mysql-secret.cnf --all-databases" > ${download_path} || \
+  docker exec wpdev-mysql bash -c "exec mysqldump --all-databases" > ${download_path} || \
     error "Oops! Something went wrong."
 
   success "Database dump saved: ${download_path}"
@@ -60,7 +60,7 @@ function backup
   fi
 
   info "Creating backup for ${database}"
-  docker exec wpdev-mysql bash -c "exec mysqldump --defaults-extra-file=/mysql-secret.cnf --databases ${database}" \
+  docker exec wpdev-mysql bash -c "exec mysqldump --databases ${database}" \
     > ${download_path} || \
     error "Oops! Looks like only partial backup was created. Please correct the errors."
 

@@ -137,7 +137,7 @@ function provision_database
 
   info "Creating database ${db_name}"
 
-  local connection_string="mysql --defaults-extra-file=/mysql-secret.cnf"
+  local connection_string="mysql"
   local create="CREATE DATABASE IF NOT EXISTS ${db_name};"
   local grant="GRANT ALL PRIVILEGES ON ${db_name}.* TO \"${DB_USER}\"@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;"
 
@@ -149,7 +149,7 @@ function mysql_health_check
 {
   info "Performing health check for mysql"
 
-  local mysql_health_check="mysqladmin --defaults-extra-file=/mysql-secret.cnf ping"
+  local mysql_health_check="mysqladmin ping"
   local cmd=$(docker exec -it wpdev-mysql bash -c "${mysql_health_check}")
 
   while [[ "${cmd}" != *"mysqld is alive"* ]]; do

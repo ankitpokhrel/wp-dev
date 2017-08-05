@@ -15,7 +15,7 @@ function continue_wordpress_setup
   if [[ -r "${host_sql_path}" ]]; then
     info "Importing ${host_sql_path}"
 
-    docker exec -it wpdev-mysql bash -c "mysql --defaults-extra-file=/mysql-secret.cnf ${DB_NAME} < ${sql_path}" || \
+    docker exec -it wpdev-mysql bash -c "mysql ${DB_NAME} < ${sql_path}" || \
       error "Unable to import ${DB_NAME}.sql"
   else
     install_core ${project_name} ${virtual_host}

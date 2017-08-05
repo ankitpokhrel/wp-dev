@@ -31,9 +31,6 @@ function build_core_images
 
   local cache=$1
 
-  cp "core/images/mysql/secret.cnf" "core/images/mysql/mysql-secret.cnf"
-  sed -i '' -e "s/<MYSQL_ROOT_PASSWORD>/${MYSQL_ROOT_PASSWORD}/g" "core/images/mysql/mysql-secret.cnf"
-
   if [[ "${cache}" == "--no-cache" ]]; then
     info "Building base image with --no-cache option"
     build_base_image ${cache}
