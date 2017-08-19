@@ -110,6 +110,14 @@ website3:
   version: 4.3
   env:
     DB_NAME: website3_db
+    
+ # Cloning from existing project
+ website2_clone:
+   clone: website2
+   host: website2clone.local
+   env:
+     DB_NAME: website2_clone_db
+
 ```
 
 ## Available options
@@ -117,6 +125,7 @@ Option         | Description                                                    
 ---------------|------------------------------------------------------------------------------------------------------------------------------|-----------------------
 host           | Host name. This entry should also be made inside `/etc/hosts`                                                                |  
 source         | Git source for the project to clone from                                                                                     |
+clone          | Existing project to clone from                                                                                               |
 version        | WordPress version                                                                                                            | latest
 title          | WordPress site title                                                                                                         | defaults from `app_env`
 admin_user     | WordPress admin user                                                                                                         | defaults from `app_env`
@@ -278,4 +287,4 @@ To debug with xdebug using IDE like PHPStorm, follow following steps.
 - [x] Add PHP_CodeSniffer for [WordPress](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards).
 - [x] Setup [Xdebug](https://xdebug.org/) remote connection.
 - [ ] Ability to sync/update plugins, themes, core etc for a project.
-- [ ] Ability to create new project from existing one (variation).
+- [x] Ability to create new project from existing one (variation).
