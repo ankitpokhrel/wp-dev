@@ -1,9 +1,8 @@
 ## WP Dev
 Rapid dev environment using docker for modern WordPress development.
 
-> This project is experimental and is currently in "works on my machine" stage. i.e
-> it is only tested in OSX Sierra 10.12.5. Please feel free to try and report any bug 
-> found. Pull requests, issues, and project recommendations are more than welcome!
+> Please feel free to try and report any bug found.
+> Pull requests, issues, and project recommendations are more than welcome!
 
 ## Overview
 WP Dev aims to setup dev environment for modern WordPress development using simple yaml configuration inside `setups.yml`. 
